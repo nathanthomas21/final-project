@@ -16,7 +16,7 @@ int f(float n)
 int main(void)
 {
 	clock_t start = clock();
-	int N = 100000000;
+	int N = 10000000;
 	double dx = 1.0 / N;
 	
 /*

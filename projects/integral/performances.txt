@@ -1,0 +1,15 @@
+integrate.cc:
+Integral: 3.14132
+Number of iterations: 10000000
+Elapsed time: 0.212793 seconds
+
+
+integrate_parallel_c.cc:
+Integral: 3.14132
+Number of iterations: 10000000
+Elapsed time: 0.114852 seconds
+
+integrate_cuda.cu:
+Integral: 3.14132213
+Number of iterations: 10000000
+Elapsed time: 0.212500006 seconds

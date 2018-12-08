@@ -36,7 +36,7 @@ void matvec(float *a, float *x, float *y, int n)
 int main(void)
 {
 	clock_t start = clock();
-  int N = 100; // 1M elements
+  int N = 10000; // 1M elements
   
   //Allocate unified memory -- accessible from cpu or gpu
   float *x, *y, *a;

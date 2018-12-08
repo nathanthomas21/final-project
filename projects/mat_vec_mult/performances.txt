@@ -1,0 +1,10 @@
+mat_vec_parallel.cc:
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Elapsed time: 0.17075017 seconds
+Number of elements in array    10000
+
+
+mat_vec_Cuda.cu:
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Number of elements in array    10000
+Elapsed time: 0.89462200 seconds

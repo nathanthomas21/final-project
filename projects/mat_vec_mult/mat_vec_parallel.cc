@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	double et = omp_get_wtime();
 
   // size of arrays
-  int n = 1000; 
+  int n = 10000; 
 
   // allocate memory
   double *a = new double[n*n];

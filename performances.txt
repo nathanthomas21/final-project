@@ -1,0 +1,54 @@
+My computer performances:
+
+mat_vec_cuda:
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Number of elements in array    10000
+Elapsed time: 1.09145400 seconds
+
+mat_vec_cublas:
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Number of elements in array    10000
+Elapsed time: 0.95164901 seconds
+
+mat_vec_parallel:
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Elapsed time: 0.35910207 seconds
+Number of elements in array    10000
+
+
+
+Beocat Performances:
+
+
+Using Node wizard04 (NVIDIA GTX 1080ti):
+mat_vec_cuda:
+[nate97@wizard04 mat_vec]$ ./mat_vec_cuda 
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Number of elements in array    10000
+Elapsed time: 1.85000000 seconds
+
+mat_vec_cublas:
+[nate97@wizard04 mat_vec]$ ./mat_vec_cublas
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Number of elements in array    10000
+Elapsed time: 2.20000005 seconds
+
+mat_vec_parallel:
+[nate97@wizard04 mat_vec]$ ./mat_vec_parallel 
+y[0]=3.0000e+00 and y[1]=2.0000e+00
+Elapsed time: 0.27902997 seconds
+Number of elements in array    10000
+
+integrate_cuda:
+[nate97@wizard04 integral]$ ./integrate_cuda 
+Integral: 3.14135265
+Number of iterations: 1000000
+Elapsed time: 1.51999998 seconds
+
+integrate_parallel:
+[nate97@wizard04 integral]$ ./integrate_parallel 
+Integral: 3.14074
+Number of iterations: 1000000
+Elapsed time: 0 seconds
+
+

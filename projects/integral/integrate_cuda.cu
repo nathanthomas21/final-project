@@ -8,7 +8,7 @@
 #include <omp.h>
 #include <iomanip>
 
-__global__ void integrate(int n, double dx, double* integral)
+__global__ void integrate(int n, float dx, float* integral)
 {
 	int index = blockIdx.x * blockDim.x + threadIdx.x;
   //int stride = blockDim.x * gridDim.x;
@@ -20,8 +20,8 @@ __global__ void integrate(int n, double dx, double* integral)
 	//for (int i = index; i < n; i++)
 	if (index < n)
 	{
-		double x = (index + 0.5) * dx;
-		double product = 1.0 / sqrt(1.0-(x*x));
+		float x = (index + 0.5) * dx;
+		float product = 1.0 / sqrt(1.0-(x*x));
 		//printf("x %f product %f", x, product);
 		integral[index] = 2.0 * product * dx;
 	}
@@ -35,17 +35,17 @@ __global__ void integrate(int n, double dx, double* integral)
 int main(void)
 {
 	clock_t start = clock();
-	double N = 10000000;
-	double dx = 1.0 / N;
+	float N = 10000000;
+	float dx = 1.0 / N;
 	//cudaError_t errorcode = cudaSuccess;
 	
 	//int size = N*sizeof(float);
 	int blockSize = 1024;
 	int numBlocks = (N + blockSize - 1) / blockSize;
-	double* integral;
+	float* integral;
 	//int stride;
 
-	cudaMallocManaged(&integral, N*sizeof(double));
+	cudaMallocManaged(&integral, N*sizeof(float));
 	//cudaMallocManaged(&data, n * sizeof(int));
 
 	integrate<<<numBlocks, blockSize>>> (N, dx, integral);
@@ -54,7 +54,7 @@ int main(void)
 	
 	cudaDeviceSynchronize();
 
-	double sum = 0.0;
+	float sum = 0.0;
 	for (int i = 0; i < N; i++) sum += integral[i];
 	
 	clock_t end = clock();

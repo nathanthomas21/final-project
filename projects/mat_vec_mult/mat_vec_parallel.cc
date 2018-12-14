@@ -1,20 +1,20 @@
 #include <cstdio>
 #include <omp.h>
 
-void matvec(double *a, double *x, double *y, int n);
-void zero_array(double *v, int n);
+void matvec(float *a, float *x, float *y, int n);
+void zero_array(float *v, int n);
 
 int main(int argc, char* argv[])
 {
-	double et = omp_get_wtime();
+	float et = omp_get_wtime();
 
   // size of arrays
   int n = 10000; 
 
   // allocate memory
-  double *a = new double[n*n];
-  double *x = new double[n];
-  double *y = new double[n];
+  float *a = new float[n*n];
+  float *x = new float[n];
+  float *y = new float[n];
 
 
 #pragma omp parallel
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   printf("y[0]=%8.4e and y[1]=%8.4e\n", y[0], y[1]);
 	printf("Elapsed time: %8.8f seconds\n", et);
 	printf("Number of elements in array %8.0f\n", float(n));
-  double b = y[1];
+  float b = y[1];
   // free memory
   delete [] a;
   delete [] x;
@@ -54,13 +54,13 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-void zero_array(double *v, int n)
+void zero_array(float *v, int n)
 {
   for (int i = 0; i < n; ++i)
     v[i] = 0.0;
 }
 
-void matvec(double *a, double *x, double *y, int n)
+void matvec(float *a, float *x, float *y, int n)
 {
 #pragma omp for
   for (int i = 0; i < n; ++i)

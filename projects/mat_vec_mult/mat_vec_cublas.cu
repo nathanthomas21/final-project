@@ -1,4 +1,4 @@
-//nvcc mat_vec_cublas.cu -lcublas -o mat_vec_cublas
+//how to compile: nvcc mat_vec_cublas.cu -lcublas -o mat_vec_cublas
 #include <iostream>
 #include <cstdio>
 #include <ctime>
@@ -7,54 +7,21 @@
 #include "cublas_v2.h"
 #include <cuda_runtime.h>
 
-//CUDA kernel function to add the elements of two arrays
-/*__global__
-void matvec(float *a, float *x, float *y, int n)
-{
-	int row = blockIdx.y * blockDim.y + threadIdx.y;
-	int col = blockDim.x * blockIdx.x + threadIdx.x
-	//int col = blockIdx.x * blockDim.x + threadIdx.x;
-	//int tid = threadIdx.x + blockIdx.x * blockDim.x;
-	float sum = 0.0;
-  //for (int i = 0/; i < n; i++)
-	//{
-		//sum += a[row*n+i] * x[i*n + col];
-	//}
-	
-	for(int i = 0; i < n; i++)
-	{
-		if (row < n)
-		{
-			sum += x[i]*a[row*n+i];
-		}
-	}
-	__syncthreads();
-	//y[tid] = sum;
-	//y[row*n+col] = sum;
-	if(row < n)
-	{
-		y[row] = sum;
-		__syncthreads();
-	}
-}*/
-
 int main(void)
 {
+	//Initialize the cuda and cublas variables
     cudaError_t cudaStat;
     cublasStatus_t stat;
     cublasHandle_t handle;
+	
+	//Initialize the clock to time the program
     clock_t start = clock();
+	
+	//Set 10000 elements in the N*N matrix and N*1 vector
+    int N = 10000;
 
-    int N = 10000; // 1M elements
-
-    //Allocate unified memory -- accessible from cpu or gpu
+    //Initialize host variables
     float *x, *y, *a;
-    /*a = new float[N*N];
-    x = new float[N];
-    y = new float[N];
-    cudaMallocManaged(&x, N*sizeof(float));
-    cudaMallocManaged(&y, N*sizeof(float));
-    cudaMallocManaged(&a, N*N*sizeof(float));*/
     x = (float*)malloc(N*sizeof(float));
     y = (float*)malloc(N*sizeof(float));
     a = (float*)malloc(N*N*sizeof(float));
@@ -74,14 +41,15 @@ int main(void)
     y[i] = 0.0;
     }
 
+	//Initialize device variables
     float* deviceA;
     float* deviceX;
     float* deviceY;
-
     cudaStat = cudaMalloc((void**)&deviceA, N*N*sizeof(*a));
     cudaStat = cudaMalloc((void**)&deviceX, N*sizeof(*x));
     cudaStat = cudaMalloc((void**)&deviceY, N*sizeof(*y));
-
+	
+	//Create a cublas event and run cublas
     stat = cublasCreate(&handle);
     stat = cublasSetMatrix(N, N, sizeof(*a), a, N, deviceA, N);
     stat = cublasSetVector(N, sizeof(*x), x, 1, deviceX, 1);
@@ -93,37 +61,27 @@ int main(void)
 
     stat = cublasGetVector(N,sizeof(*y),deviceY,1,y,1);
 
-    // Run kernel on 1M elements on the CPU
-    //int blockSize = 1024;
-    //int numBlocks = (N + blockSize - 1) / blockSize;
-    //matvec<<<numBlocks, blockSize>>>(a, x, y, N);
-
     //Wait for GPU to finish before accessing on host
     cudaDeviceSynchronize();
-
-
-
+	
+	//End the clock timer
     float el = float(clock() - start) / CLOCKS_PER_SEC;
 
-    //cudaFree(deviceX);
-    //cudaFree(deviceY);
-    //cudaFree(deviceA);
+	//Free device memory
+    cudaFree(deviceX);
+    cudaFree(deviceY);
+    cudaFree(deviceA);
 
+	//Print the results
     printf("y[0]=%8.4e and y[1]=%8.4e\n", y[0], y[1]);
     printf("Number of elements in array %8.0f\n", float(N));
     printf("Elapsed time: %8.8f seconds\n", el);
-    // Check for errors (all values should be 3.0f)
-    /*float maxError = 0.0f;
-    for (int i = 0; i < N; i++)
-    maxError = fmax(maxError, fabs(y[i]-3.0f));
-    std::cout << "Max error: " << maxError << std::endl;*/
 
     // Free memory
-
     cublasDestroy(handle);
-    //free(a);
-    //free(x);
-    //free(y);
+    free(a);
+    free(x);
+    free(y);
 
     return EXIT_SUCCESS;
 }

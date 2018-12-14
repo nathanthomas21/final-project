@@ -10,59 +10,54 @@
 
 __global__ void integrate(int n, float dx, float* integral)
 {
+	//Set the index
 	int index = blockIdx.x * blockDim.x + threadIdx.x;
-  //int stride = blockDim.x * gridDim.x;
-	//int chunk = n / blockIdx.x;
-	//int start = threadIdx.x * chunk;
-	//int end = (threadIdx.x + 1) * chunk;
-	//printf("Hello");
-	//float dx = 1.0 / float(n);
-	//for (int i = index; i < n; i++)
+	
+	//Calculate the integral and store each result at the above index
 	if (index < n)
 	{
 		float x = (index + 0.5) * dx;
 		float product = 1.0 / sqrt(1.0-(x*x));
-		//printf("x %f product %f", x, product);
 		integral[index] = 2.0 * product * dx;
 	}
-	//integral = integral * 2;
-
-	//if (threadIdx.x == 0)
-    //    atomicAdd(integral + iter_num, block_ressult);
 }
 
 
 int main(void)
 {
+	//Initialize the clock and set number of iterations
 	clock_t start = clock();
 	float N = 10000000;
 	float dx = 1.0 / N;
-	//cudaError_t errorcode = cudaSuccess;
 	
-	//int size = N*sizeof(float);
+	//Set block size and initialize the output array
 	int blockSize = 1024;
 	int numBlocks = (N + blockSize - 1) / blockSize;
 	float* integral;
-	//int stride;
 
+	//Make tge output array available both locally and on the GPU
 	cudaMallocManaged(&integral, N*sizeof(float));
-	//cudaMallocManaged(&data, n * sizeof(int));
 
+	//Run the kernel
 	integrate<<<numBlocks, blockSize>>> (N, dx, integral);
 
-	
-	
+	//Synchronize the CPU and GPU
 	cudaDeviceSynchronize();
 
+	//Compute the sum of all the elements of the output array
 	float sum = 0.0;
 	for (int i = 0; i < N; i++) sum += integral[i];
 	
+	//Finish the clock
 	clock_t end = clock();
 	float el = float(end-start) / CLOCKS_PER_SEC;
+	
+	//Print the results
 	std::cout << std::setprecision(9) << "Integral: " << sum << std::endl;
 	std::cout << "Number of iterations: " << N << std::endl;
 	std::cout << "Elapsed time: " << el << " seconds" << std::endl;
 
+	//Free the memory
 	cudaFree(integral);
 
 	return 0;
